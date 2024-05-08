@@ -58,8 +58,12 @@ class HotAndNewData {
   @JsonKey(name: 'release_date')
   String? releaseDate;
 
-   @JsonKey(name: "")
+   @JsonKey(name: "title")
   String? title;
+
+   @JsonKey(name: "original_name")
+  String? originalName;
+     
 
  
  
@@ -72,6 +76,7 @@ class HotAndNewData {
     this.originalLanguage,
     this.originalTitle,
     this.overview,
+    this.originalName,
     
     this.posterPath,
     this.releaseDate,

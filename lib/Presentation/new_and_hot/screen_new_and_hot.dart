@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:netflix_app/Presentation/new_and_hot/widgets/everyones_watching_widget.dart';
 import 'package:netflix_app/application/hot_and_new/hot_and_new_bloc.dart';
 import 'package:netflix_app/core/colors/colors.dart';
 import 'package:netflix_app/core/constants.dart';
@@ -70,8 +71,11 @@ class ScreenNewAndHot extends StatelessWidget {
             ComingSoonList(
               key: Key('coming_soon'),
             ),
-            _buildEveryonesWatching(),
-          ])),
+            EveryonesWatchingList(key: Key('everyones_watching'),)
+            //_buildEveryonesWatching(),
+          ]
+          ),
+          ),
     );
   }
 
@@ -145,6 +149,49 @@ class ComingSoonList extends StatelessWidget {
                     day: date,
                     posterPath: '$ImageAppendUrl${movie.posterPath}',
                     movieName: movie.originalTitle ?? 'No title',
+                    description: movie.overview ?? 'No Description');
+              });
+        }
+      },
+    );
+  }
+}
+
+
+
+
+class EveryonesWatchingList extends StatelessWidget {
+  const EveryonesWatchingList({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      BlocProvider.of<HotAndNewBloc>(context).add(LoadDataInEveryOneIsWatching());
+    });
+    return BlocBuilder<HotAndNewBloc, HotAndNewState>(
+      builder: (context, state) {
+        if (state.isLoading) {
+          return Center(
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+            ),
+          );
+        } else if (state.hasError) {
+          return Center(child: Text("Error While Loading EveryOnesWatchingList"));
+        } else if (state.everyOneIsWatchingList.isEmpty) {
+          return Center(child: Text("EveryOnesWatchingList Is Empty"));
+        } else {
+          return ListView.builder(
+              itemCount: state.everyOneIsWatchingList.length,
+              itemBuilder: (BuildContext context, index) {
+                final movie = state.everyOneIsWatchingList[index];
+                if (movie.id == null) {
+                  return const SizedBox();
+                }
+                return EveryonesWatchingWidget(
+                  
+                    posterPath: '$ImageAppendUrl${movie.backdropPath}',
+                    movieName: movie.originalName ?? 'No title',
                     description: movie.overview ?? 'No Description');
               });
         }
